@@ -1,0 +1,54 @@
+* NAME
+
+  pylight - A simple backlight controller written in Python.
+
+
+* DESCRIPTION
+  
+  =pylight= is a simple software written in Python to control backlights and other lights on GNU/Linux system with =xbacklight=-like options.
+  =pylight= works in a fully CLI environment, which does not require X to be running while =xbacklight= does.
+
+
+* INSTALLATION
+
+  #+BEGIN_SRC sh
+  $ git clone https://github.com/akihironitta/pylight.git
+  $ cd pylight
+  #+END_SRC
+
+
+* OPTIONS
+
+  - =-max= set brightness to maximum value
+  - =-min= set brightness to minimum value (a quater of maximum value)
+  - =-set= set brightness to value
+  - =-inc= increase brightness by value
+  - =-dec= decrease brightness by value
+  # - =-dev= set device to value
+
+
+* Usage/Exampels
+
+  - Check the current brightness.
+    #+begin_src sh
+    pylight
+    #+end_src
+  - Set to the specified brightness =100=.
+    #+begin_src sh
+    pylight -set 100
+    #+end_src
+  - Set to the maximum brightness.
+    #+begin_src sh
+    pylight -max
+    #+end_src
+  - Set to the minimum brightness.
+    #+begin_src sh
+    pylight -min
+    #+end_src
+  # - =pylight -set 100 -dev /sys/class/leds/tpacpi::kbd_backlight=
+
+
+* SEE ALSO
+
+  - [[https://github.com/tcatm/xbacklight][=xbacklight=]]
+

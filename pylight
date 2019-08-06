@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+#
+# A simple backlight controller written in Python.
+# Copyright (c) 2019, Akihiro Nitta.
+# All rights reserved.
+#
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import argparse
+import subprocess
+
+
+class LightDevice():
+    """A light device class"""
+
+    def __init__(self, path):
+        self.path = path
+        self.max_brightness = self.read_max_brightness()
+        self.brightness = self.read_brightness()
+
+    def __str__(self):
+        return f"{self.path} is set to {self.brightness}/{self.max_brightness}."
+
+    def __repr__(self):
+        return f"{self.path} {self.brightness} {self.max_brightness}"
+
+    def read_brightness(self):
+        """Read the current brightness of the device."""
+        output = subprocess.getoutput(f"cat {self.path}/brightness")
+        return int(output)
+
+    def read_max_brightness(self):
+        """Read the maximum brightness of the device."""
+        output = subprocess.getoutput(f"cat {self.path}/max_brightness")
+        return int(output)
+
+    def set_brightness(self, target_brightness):
+        """Set the brightness to TARGET_BRIGHTNESS."""
+        self.brightness = max(0, min(target_brightness, self.max_brightness))
+        subprocess.getoutput(
+            f"sudo sh -c 'echo {self.brightness} > {self.path}/brightness'")
+
+    def set_max_brightness(self):
+        """Set the brightness to MAX_BRIGHTNESS."""
+        self.set_brightness(self.max_brightness)
+
+    def set_min_brightness(self):
+        """Set the brightness to MIN_BRIGHTNESS.
+        Note: MIN_BRIGHTNESS does not really mean the minimum brightness.
+              It is actually a quater of the maximum brightness."""
+        min_brightness = int(self.max_brightness * 0.25)
+        self.set_brightness(min_brightness)
+
+    def inc_brightness(self, delta):
+        """Increase the brightness of the default by DELTA."""
+        target_brightness = self.brightness + delta
+        self.set_brightness(target_brightness)
+
+    def dec_brightness(self, delta):
+        """Decrease the brightness of the default by DELTA."""
+        self.inc_brightness(-delta)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-L", "-l",
+                        action="store_true",
+                        help='list available devices',
+                        default=False)
+    parser.add_argument("-dev",
+                        help='set device to value',
+                        type=str,
+                        default="/sys/class/backlight/intel_backlight")
+    parser.add_argument("-set",
+                        help='set brightness to value',
+                        type=int,
+                        default=-1)
+    parser.add_argument("-inc",
+                        help='increase brightness by value',
+                        type=int,
+                        default=0)
+    parser.add_argument("-dec",
+                        help='decrease brightness by value',
+                        type=int,
+                        default=0)
+    parser.add_argument("-max",
+                        action="store_true",
+                        help='set brightness to maximum value',
+                        default=False)
+    parser.add_argument("-min",
+                        action="store_true",
+                        help='set brightness to minimum value (a quater of maximum value)',
+                        default=False)
+    return parser.parse_args()
+
+
+def check_arguments(args):
+    """Check if specified options do not conflict with each other."""
+    # FIXME: Not implemented yet.
+    if args.inc and args.dec:
+        pass
+
+
+def main():
+    args = parse_arguments()
+    check_arguments(args)
+
+    dev = LightDevice(args.dev)
+
+    if args.max:
+        dev.set_max_brightness()
+    elif args.min:
+        dev.set_min_brightness()
+    elif args.set != -1:
+        dev.set_brightness(args.set)
+    elif args.inc:
+        dev.inc_brightness(args.inc)
+    elif args.dec:
+        dev.dec_brightness(args.dec)
+
+    print(dev)
+
+
+if __name__ == "__main__":
+    main()
