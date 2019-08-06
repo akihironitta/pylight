@@ -27,7 +27,7 @@
   # - =-dev= set device to value
 
 
-* Usage/Exampels
+* Usage
 
   - Check the current brightness.
     #+begin_src sh
@@ -50,5 +50,5 @@
 
 * SEE ALSO
 
-  - [[https://github.com/tcatm/xbacklight][=xbacklight=]]
+  - [[https://github.com/tcatm/xbacklight][xbacklight]]
 
