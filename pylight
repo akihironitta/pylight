@@ -20,6 +20,7 @@
 
 import argparse
 import subprocess
+import os
 
 
 class LightDevice():
@@ -34,7 +35,7 @@ class LightDevice():
         return f"{self.path} is set to {self.brightness}/{self.max_brightness}."
 
     def __repr__(self):
-        return f"{self.path} {self.brightness} {self.max_brightness}"
+        return f"<LightDevice {self.path} {self.brightness} {self.max_brightness}>"
 
     def read_brightness(self):
         """Read the current brightness of the device."""
@@ -109,8 +110,19 @@ def parse_arguments():
 def check_arguments(args):
     """Check if specified options do not conflict with each other."""
     # FIXME: Not implemented yet.
-    if args.inc and args.dec:
-        pass
+    pass
+
+def list_devices():
+    BASEDIRS = ["/sys/class/backlight/",
+                "/sys/class/leds/"]
+    list_of_devices = []
+    for base_dir in BASEDIRS:
+        for sub_dir in os.listdir(base_dir):
+            light_dev = os.path.join(base_dir, sub_dir)
+            if os.path.isfile(os.path.join(light_dev, "brightness")):
+                print(os.path.join(light_dev))
+                list_of_devices.append(light_dev)
+    return list_of_devices
 
 
 def main():
@@ -129,6 +141,8 @@ def main():
         dev.inc_brightness(args.inc)
     elif args.dec:
         dev.dec_brightness(args.dec)
+    elif args.L:
+        list_devices()
 
     print(dev)
 
