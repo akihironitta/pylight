@@ -19,7 +19,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
-import subprocess
 import os
 
 
@@ -39,19 +38,21 @@ class LightDevice():
 
     def read_brightness(self):
         """Read the current brightness of the device."""
-        output = subprocess.getoutput(f"cat {self.path}/brightness")
+        with open(f"{self.path}/brightness", "r") as f:
+            output = f.read()
         return int(output)
 
     def read_max_brightness(self):
         """Read the maximum brightness of the device."""
-        output = subprocess.getoutput(f"cat {self.path}/max_brightness")
+        with open(f"{self.path}/max_brightness", "r") as f:
+            output = f.read()
         return int(output)
 
     def set_brightness(self, target_brightness):
         """Set the brightness to TARGET_BRIGHTNESS."""
         self.brightness = max(0, min(target_brightness, self.max_brightness))
-        subprocess.getoutput(
-            f"sudo sh -c 'echo {self.brightness} > {self.path}/brightness'")
+        with open(f"{self.path}/brightness", "w") as f:
+            f.write(f"{self.brightness}")
 
     def set_max_brightness(self):
         """Set the brightness to MAX_BRIGHTNESS."""
