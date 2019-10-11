@@ -10,10 +10,21 @@
 
 
 * INSTALLATION
-
+  
+  First, clone =pylight= repository.
   #+BEGIN_SRC sh
   $ git clone https://github.com/akihironitta/pylight.git
   $ cd pylight
+  #+END_SRC
+
+  To enable =pylight= running without root permission, place =90-backlight.rules= in one of the udev rules directories, e.g. =/etc/udev/rules.d/=. 
+  #+BEGIN_SRC sh
+  $ mv 90-backlight.rules /etc/udev/rules.d/
+  #+END_SRC
+
+  Rebooting the system may be required to apply this configuration depending on your system.
+  #+BEGIN_SRC sh
+  $ sudo reboot
   #+END_SRC
 
 
