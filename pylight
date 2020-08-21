@@ -20,62 +20,63 @@
 
 import argparse
 import os
+from typing import List
 
 
-class LightDevice():
+class LightDevice(object):
     """A light device class"""
 
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         self.path = path
         self.max_brightness = self.read_max_brightness()
         self.brightness = self.read_brightness()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.path} is set to {self.brightness}/{self.max_brightness}."
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<LightDevice {self.path} {self.brightness} {self.max_brightness}>"
 
-    def read_brightness(self):
+    def read_brightness(self) -> int:
         """Read the current brightness of the device."""
         with open(f"{self.path}/brightness", "r") as f:
             output = f.read()
         return int(output)
 
-    def read_max_brightness(self):
+    def read_max_brightness(self) -> int:
         """Read the maximum brightness of the device."""
         with open(f"{self.path}/max_brightness", "r") as f:
             output = f.read()
         return int(output)
 
-    def set_brightness(self, target_brightness):
+    def set_brightness(self, target_brightness: int) -> None:
         """Set the brightness to TARGET_BRIGHTNESS."""
         self.brightness = max(0, min(target_brightness, self.max_brightness))
         with open(f"{self.path}/brightness", "w") as f:
             f.write(f"{self.brightness}")
 
-    def set_max_brightness(self):
+    def set_max_brightness(self) -> None:
         """Set the brightness to MAX_BRIGHTNESS."""
         self.set_brightness(self.max_brightness)
 
-    def set_min_brightness(self):
+    def set_min_brightness(self) -> None:
         """Set the brightness to MIN_BRIGHTNESS.
         Note: MIN_BRIGHTNESS does not really mean the minimum brightness.
               It is actually a quater of the maximum brightness."""
         min_brightness = int(self.max_brightness * 0.25)
         self.set_brightness(min_brightness)
 
-    def inc_brightness(self, delta):
+    def inc_brightness(self, delta: int) -> None:
         """Increase the brightness of the default by DELTA."""
         target_brightness = self.brightness + delta
         self.set_brightness(target_brightness)
 
-    def dec_brightness(self, delta):
+    def dec_brightness(self, delta: int) -> None:
         """Decrease the brightness of the default by DELTA."""
         self.inc_brightness(-delta)
 
 
-def parse_arguments():
+def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("-L", "-l",
                         action="store_true",
@@ -108,12 +109,13 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def check_arguments(args):
+def check_arguments(args: argparse.Namespace) -> None:
     """Check if specified options do not conflict with each other."""
     # FIXME: Not implemented yet.
     pass
 
-def list_devices():
+
+def list_devices() -> List[str]:
     BASEDIRS = ["/sys/class/backlight/",
                 "/sys/class/leds/"]
     list_of_devices = []
@@ -126,9 +128,10 @@ def list_devices():
     return list_of_devices
 
 
-def main():
+def main() -> None:
     args = parse_arguments()
     check_arguments(args)
+    print(type(args))
 
     dev = LightDevice(args.dev)
 
