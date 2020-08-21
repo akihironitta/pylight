@@ -1,5 +1,5 @@
 # NAME  
-pylight - A simple backlight controller written in Python.  
+`pylight` - A simple backlight controller written in Python.  
 
 # DESCRIPTION  
 `pylight` is a simple software written in Python to control backlights and other lights on GNU/Linux system with `xbacklight`-like options.
